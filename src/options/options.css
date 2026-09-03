@@ -181,6 +181,25 @@ button {
   font-size: 13px;
 }
 
+.section-heading--backup {
+  margin-bottom: 0;
+}
+
+.backup-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 9px;
+}
+
+.backup-note {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid #eceef3;
+  color: #777d8e;
+  font-size: 12px;
+  line-height: 18px;
+}
+
 .entry-list {
   display: grid;
   gap: 10px;
@@ -518,6 +537,11 @@ a:focus-visible {
 
   .section-heading .button {
     width: 100%;
+  }
+
+  .backup-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .collection {

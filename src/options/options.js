@@ -3,6 +3,7 @@
 
   const aliasModel = root.AliasBuddy.core.aliases;
   const storage = root.AliasBuddy.core.storage.createStorage(root.chrome);
+  const backup = root.AliasBuddy.core.backup;
   const elements = {
     peopleList: document.getElementById('people-list'),
     groupsList: document.getElementById('groups-list'),
@@ -30,7 +31,8 @@
     memberModePaste: document.getElementById('member-mode-paste'),
     addMember: document.getElementById('add-member'),
     membersError: document.getElementById('members-error'),
-    formStatus: document.getElementById('form-status')
+    formStatus: document.getElementById('form-status'),
+    importBackupFile: document.getElementById('import-backup-file')
   };
 
   let entries = [];
@@ -365,6 +367,60 @@
     }
   }
 
+  async function exportBackup() {
+    try {
+      const savedEntries = await storage.getAll();
+      const contents = backup.stringifyBackup(savedEntries);
+      const url = root.URL.createObjectURL(new Blob([contents], { type: 'application/json' }));
+      const download = document.createElement('a');
+      download.href = url;
+      download.download = backup.createBackupFilename();
+      download.hidden = true;
+      document.body.appendChild(download);
+      download.click();
+      download.remove();
+      root.setTimeout(() => root.URL.revokeObjectURL(url), 0);
+      setPageStatus('Backup exported. Save the downloaded file somewhere private.', 'success');
+    } catch (error) {
+      setPageStatus(error instanceof Error ? error.message : 'Could not export the backup.');
+    }
+  }
+
+  async function importBackup(event) {
+    const [file] = event.target.files || [];
+    if (!file) {
+      return;
+    }
+
+    try {
+      if (file.size > 5 * 1024 * 1024) {
+        throw new backup.BackupValidationError('The backup file is too large.');
+      }
+
+      const restoredEntries = backup.parseBackup(await file.text());
+      const personCount = restoredEntries.filter(
+        entry => entry.type === aliasModel.ENTRY_TYPES.PERSON
+      ).length;
+      const groupCount = restoredEntries.filter(
+        entry => entry.type === aliasModel.ENTRY_TYPES.GROUP
+      ).length;
+      const confirmed = root.confirm(
+        `Replace your current data with ${personCount} ${personCount === 1 ? 'alias' : 'aliases'} and ${groupCount} ${groupCount === 1 ? 'group' : 'groups'} from this backup?`
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      await storage.replaceAll(restoredEntries);
+      setPageStatus('Backup imported successfully.', 'success');
+    } catch (error) {
+      setPageStatus(error instanceof Error ? error.message : 'Could not import the backup.');
+    } finally {
+      elements.importBackupFile.value = '';
+    }
+  }
+
   document.getElementById('add-person').addEventListener('click', () => {
     openEditor(aliasModel.ENTRY_TYPES.PERSON);
   });
@@ -380,6 +436,11 @@
   elements.addMember.addEventListener('click', () => addMemberRow());
   elements.memberModeIndividual.addEventListener('click', () => setMemberInputMode('individual'));
   elements.memberModePaste.addEventListener('click', () => setMemberInputMode('paste'));
+  document.getElementById('export-backup').addEventListener('click', exportBackup);
+  document.getElementById('import-backup').addEventListener('click', () => {
+    elements.importBackupFile.click();
+  });
+  elements.importBackupFile.addEventListener('change', importBackup);
   document.getElementById('close-dialog').addEventListener('click', closeEditor);
   document.getElementById('cancel-dialog').addEventListener('click', closeEditor);
   elements.form.addEventListener('submit', saveEntry);

@@ -1,5 +1,5 @@
 import { readFile, access } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const manifestPath = resolve(root, 'manifest.json');
@@ -33,6 +33,10 @@ for (const htmlPath of [manifest.action.default_popup, manifest.options_ui.page]
   const html = await readFile(resolve(root, htmlPath), 'utf8');
   check(!/<script[^>]+src=["']https?:/i.test(html), `${htmlPath} contains a remote script.`);
   check(!/<script(?![^>]+src=)[^>]*>/i.test(html), `${htmlPath} contains inline JavaScript.`);
+
+  const localScripts = [...html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)]
+    .map(match => match[1]);
+  await Promise.all(localScripts.map(script => access(resolve(root, dirname(htmlPath), script))));
 }
 
 console.log(`Validated AliasBuddy ${manifest.version}: ${referencedFiles.length} referenced files found.`);

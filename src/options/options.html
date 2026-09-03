@@ -61,6 +61,23 @@
           <button id="empty-add-group" class="text-button" type="button">Create your first group</button>
         </div>
       </section>
+
+      <section class="collection" aria-labelledby="backup-heading">
+        <div class="section-heading section-heading--backup">
+          <div>
+            <h2 id="backup-heading">Backup</h2>
+            <p>Export a private JSON backup for Google Drive, or restore one later.</p>
+          </div>
+          <div class="backup-actions">
+            <button id="export-backup" class="button button--secondary" type="button">Export backup</button>
+            <button id="import-backup" class="button button--secondary" type="button">Import backup</button>
+            <input id="import-backup-file" type="file" accept="application/json,.json" hidden>
+          </div>
+        </div>
+        <p class="backup-note">
+          Backup files contain your saved nicknames and email addresses. Keep them private.
+        </p>
+      </section>
     </main>
 
     <dialog id="entry-dialog" class="entry-dialog" aria-labelledby="dialog-title">
@@ -127,6 +144,7 @@
 
     <script src="../core/aliases.js"></script>
     <script src="../core/storage.js"></script>
+    <script src="../core/backup.js"></script>
     <script src="options.js"></script>
   </body>
 </html>

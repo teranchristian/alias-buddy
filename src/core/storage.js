@@ -97,6 +97,26 @@
       return true;
     }
 
+    async function replaceAll(nextEntries) {
+      const validatedEntries = [];
+      const entryIds = new Set();
+
+      for (const candidate of nextEntries) {
+        const validation = aliasModel.validateEntry(candidate, validatedEntries);
+        if (!validation.valid || entryIds.has(validation.entry.id)) {
+          const errors = entryIds.has(validation.entry.id)
+            ? { id: 'Every entry must have a unique ID.' }
+            : validation.errors;
+          throw new aliasModel.AliasValidationError(errors);
+        }
+
+        entryIds.add(validation.entry.id);
+        validatedEntries.push(validation.entry);
+      }
+
+      return writeEntries(validatedEntries);
+    }
+
     function subscribe(listener) {
       const handleChange = (changes, areaName) => {
         if (areaName !== 'local' || !changes[STORAGE_KEY]) {
@@ -120,6 +140,7 @@
       getById,
       upsert,
       remove,
+      replaceAll,
       subscribe
     });
   }

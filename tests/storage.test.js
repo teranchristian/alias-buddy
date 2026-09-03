@@ -87,3 +87,25 @@ test('notifies subscribers and supports unsubscribing', async () => {
   assert.equal(snapshots.length, 1);
   assert.equal(snapshots[0][0].nickname, 'Sunshine');
 });
+
+test('validates and atomically replaces all entries during restore', async () => {
+  const { chromeApi } = createChromeMock();
+  const storage = createStorage(chromeApi);
+  const replacement = [
+    {
+      id: 'group-one',
+      type: 'group',
+      nickname: 'Book club',
+      emails: ['member@example.com']
+    }
+  ];
+
+  await storage.replaceAll(replacement);
+  assert.deepEqual(await storage.getAll(), replacement);
+
+  await assert.rejects(() => storage.replaceAll([
+    replacement[0],
+    { ...replacement[0], nickname: 'Another group' }
+  ]), /invalid/i);
+  assert.deepEqual(await storage.getAll(), replacement);
+});

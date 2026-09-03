@@ -10,6 +10,7 @@ The first adapter supports Google Calendar. Type at least two characters of a sa
 - Group aliases: one nickname mapped to several email addresses
 - Individual or paste-list group editing, with comma, semicolon, and new-line support
 - Group cloning that opens an unsaved copy with a unique nickname
+- Versioned JSON backup export and validated restore
 - Case-insensitive nickname matching after two characters
 - Local storage with `chrome.storage.local`
 - Full add, edit, and delete management UI
@@ -146,6 +147,15 @@ See [Google Calendar reference behavior](docs/google-calendar-reference.md) for 
 
 The popup, settings page, data model, storage, and generic `content.js` bootstrap do not need to change.
 
+## Backup and restore
+
+Open **Manage AliasBuddy** and use the **Backup** section:
+
+- **Export backup** downloads a dated `aliasbuddy-backup-YYYY-MM-DD.json` file. Move that file into a private Google Drive folder or another safe location.
+- **Import backup** validates a selected AliasBuddy backup and shows its alias/group totals before asking permission to replace the current data.
+
+Import is atomic: AliasBuddy validates every entry before writing anything. Cancelling the confirmation or selecting an invalid file leaves the current data unchanged. Backup files contain readable nicknames and email addresses, so keep them private.
+
 ## Google Calendar manual testing checklist
 
 - [ ] Add a person alias in settings and confirm it appears after reopening the page.
@@ -166,6 +176,15 @@ The popup, settings page, data model, storage, and generic `content.js` bootstra
 - [ ] Resize and scroll with results open; the popup stays aligned.
 - [ ] Navigate within Calendar until its event UI rerenders; AliasBuddy does not duplicate listeners or popups.
 - [ ] Reload the extension and then reload Calendar; AliasBuddy starts once and continues working.
+
+## Backup-testing checklist
+
+- [ ] Export a populated dataset and confirm a dated JSON file downloads.
+- [ ] Inspect the JSON and confirm it contains the backup format, version, export timestamp, and entries.
+- [ ] Cancel an import at the confirmation prompt and confirm current data remains unchanged.
+- [ ] Import a valid backup and confirm aliases and groups are restored.
+- [ ] Try malformed JSON, an unsupported backup version, duplicate nicknames, and invalid emails; each must be rejected without changing current data.
+- [ ] Export an empty dataset and confirm it can be restored intentionally after confirmation.
 
 ## Group-testing checklist
 

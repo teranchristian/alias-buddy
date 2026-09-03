@@ -126,13 +126,13 @@ button {
 }
 
 .button--group {
-  border: 1px solid #0f8c83;
-  background: #e7f7f5;
-  color: #0b716a;
+  border: 1px solid #8b87ee;
+  background: #eeedff;
+  color: #4f4bcb;
 }
 
 .button--group:hover {
-  background: #d5f0ed;
+  background: #dfddff;
 }
 
 .button--secondary {

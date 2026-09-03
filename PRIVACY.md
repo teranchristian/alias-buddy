@@ -31,6 +31,8 @@ AliasBuddy:
 - does not call external APIs; and
 - does not use saved data for advertising, credit decisions, or unrelated purposes.
 
+Users can explicitly export their data to a JSON backup file and import it later. Exported files are created locally and are not uploaded by AliasBuddy. If a user stores an exported file in Google Drive or another service, that service processes the file according to its own privacy policy.
+
 When the user selects an alias, the mapped email is entered into the supported website's native contact-search interface. That website processes the search according to its own privacy policy, just as it would if the user typed the email manually.
 
 ## Permissions
