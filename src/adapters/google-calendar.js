@@ -513,8 +513,6 @@
         await sleep(700);
       }
 
-      this.clearSearchInput(this.findPeopleInput());
-
       if (!failed.length) {
         this.showToast(`Added ${added.length} ${added.length === 1 ? 'person' : 'people'} from ${entry.nickname}`);
       } else {
