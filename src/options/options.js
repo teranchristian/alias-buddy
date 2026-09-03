@@ -27,6 +27,8 @@
     groupFields: document.getElementById('group-fields'),
     memberList: document.getElementById('member-list'),
     memberTextarea: document.getElementById('member-textarea'),
+    memberIndividualPanel: document.getElementById('member-individual-panel'),
+    memberPastePanel: document.getElementById('member-paste-panel'),
     memberModeIndividual: document.getElementById('member-mode-individual'),
     memberModePaste: document.getElementById('member-mode-paste'),
     addMember: document.getElementById('add-member'),
@@ -194,12 +196,27 @@
 
     memberInputMode = mode;
     const isIndividual = mode === 'individual';
-    elements.memberList.hidden = !isIndividual;
-    elements.memberTextarea.hidden = isIndividual;
-    elements.addMember.hidden = !isIndividual;
-    elements.memberModeIndividual.setAttribute('aria-pressed', String(isIndividual));
-    elements.memberModePaste.setAttribute('aria-pressed', String(!isIndividual));
+    elements.memberIndividualPanel.hidden = !isIndividual;
+    elements.memberPastePanel.hidden = isIndividual;
+    elements.memberModeIndividual.setAttribute('aria-selected', String(isIndividual));
+    elements.memberModePaste.setAttribute('aria-selected', String(!isIndividual));
+    elements.memberModeIndividual.tabIndex = isIndividual ? 0 : -1;
+    elements.memberModePaste.tabIndex = isIndividual ? -1 : 0;
     clearFormErrors();
+  }
+
+  function handleMemberModeKeydown(event) {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+      return;
+    }
+
+    event.preventDefault();
+    const nextMode = memberInputMode === 'individual' ? 'paste' : 'individual';
+    setMemberInputMode(nextMode);
+    const nextTab = nextMode === 'individual'
+      ? elements.memberModeIndividual
+      : elements.memberModePaste;
+    nextTab.focus();
   }
 
   function uniqueCloneNickname(nickname) {
@@ -436,6 +453,8 @@
   elements.addMember.addEventListener('click', () => addMemberRow());
   elements.memberModeIndividual.addEventListener('click', () => setMemberInputMode('individual'));
   elements.memberModePaste.addEventListener('click', () => setMemberInputMode('paste'));
+  elements.memberModeIndividual.addEventListener('keydown', handleMemberModeKeydown);
+  elements.memberModePaste.addEventListener('keydown', handleMemberModeKeydown);
   document.getElementById('export-backup').addEventListener('click', exportBackup);
   document.getElementById('import-backup').addEventListener('click', () => {
     elements.importBackupFile.click();

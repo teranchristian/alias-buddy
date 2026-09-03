@@ -10,6 +10,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -433,11 +437,9 @@ a:focus-visible {
 }
 
 .member-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 9px;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .member-heading > span {
@@ -446,28 +448,43 @@ a:focus-visible {
 }
 
 .member-mode {
-  display: inline-flex;
-  padding: 3px;
-  border: 1px solid #dfe2eb;
-  border-radius: 9px;
-  background: #f5f6fa;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #dadcf0;
+  border-radius: 11px;
+  background: #f1f0ff;
 }
 
 .member-mode-button {
-  min-height: 30px;
-  padding: 5px 9px;
+  min-height: 40px;
+  padding: 8px 12px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 8px;
   background: transparent;
-  color: #687084;
-  font-size: 11px;
-  font-weight: 700;
+  color: #67658b;
+  font-size: 13px;
+  font-weight: 750;
+  transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
 }
 
-.member-mode-button[aria-pressed="true"] {
+.member-mode-button:hover:not([aria-selected="true"]) {
+  color: #504dd8;
+  background: rgb(255 255 255 / 48%);
+}
+
+.member-mode-button[aria-selected="true"] {
   background: #fff;
   color: #504dd8;
-  box-shadow: 0 1px 4px rgb(35 39 75 / 12%);
+  box-shadow: 0 2px 7px rgb(58 55 160 / 14%);
+}
+
+.member-panel {
+  padding: 14px;
+  border: 1px solid #e3e4f1;
+  border-radius: 11px;
+  background: #fbfbfe;
 }
 
 .member-row {
@@ -479,6 +496,19 @@ a:focus-visible {
 
 .member-row input {
   min-height: 42px;
+}
+
+.member-panel .button--quiet {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.member-paste-label {
+  display: block;
+  margin-bottom: 9px;
+  color: #6f7587;
+  font-size: 12px;
+  line-height: 18px;
 }
 
 .remove-member {
@@ -550,16 +580,6 @@ a:focus-visible {
 
   .entry-card {
     grid-template-columns: 42px minmax(0, 1fr);
-  }
-
-  .member-heading {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .member-mode {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
   }
 
   .entry-actions {

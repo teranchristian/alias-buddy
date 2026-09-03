@@ -8,7 +8,7 @@ The first adapter supports Google Calendar. Type at least two characters of a sa
 
 - Person aliases: one nickname mapped to one email address
 - Group aliases: one nickname mapped to several email addresses
-- Individual or paste-list group editing, with comma, semicolon, and new-line support
+- Exclusive individual and paste-list group views, with two-way email synchronization
 - Group cloning that opens an unsaved copy with a unique nickname
 - Versioned JSON backup export and validated restore
 - Case-insensitive nickname matching after two characters
@@ -189,8 +189,11 @@ Import is atomic: AliasBuddy validates every entry before writing anything. Canc
 ## Group-testing checklist
 
 - [ ] Create a group with two or more valid, unique email addresses.
-- [ ] Switch to **Paste list**, paste comma-separated addresses, save, and confirm every member is retained.
-- [ ] Switch between **Individual fields** and **Paste list** and confirm no member is lost.
+- [ ] Confirm only one member-entry view is visible at a time.
+- [ ] Enter addresses individually, switch to **Paste emails**, and confirm every address appears in the text area.
+- [ ] Update the pasted list, switch to **Add individually**, and confirm every pasted address becomes its own field.
+- [ ] Switch between both views again and confirm no email is lost.
+- [ ] Paste comma-, semicolon-, and new-line-separated addresses, save, and confirm every member is retained.
 - [ ] Confirm empty nicknames, invalid emails, and duplicate group emails are rejected.
 - [ ] Clone a group and confirm the form opens with copied members, a new ID, and a unique copy nickname.
 - [ ] Save the clone and confirm the original group remains unchanged.

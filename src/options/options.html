@@ -111,26 +111,60 @@
           <div class="field">
             <div class="member-heading">
               <span>Members</span>
-              <div class="member-mode" role="group" aria-label="Member entry mode">
-                <button id="member-mode-individual" class="member-mode-button" type="button" aria-pressed="true">
-                  Individual fields
+              <div class="member-mode" role="tablist" aria-label="Member entry mode">
+                <button
+                  id="member-mode-individual"
+                  class="member-mode-button"
+                  type="button"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="member-individual-panel"
+                >
+                  Add individually
                 </button>
-                <button id="member-mode-paste" class="member-mode-button" type="button" aria-pressed="false">
-                  Paste list
+                <button
+                  id="member-mode-paste"
+                  class="member-mode-button"
+                  type="button"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="member-paste-panel"
+                  tabindex="-1"
+                >
+                  Paste emails
                 </button>
               </div>
             </div>
-            <div id="member-list" class="member-list"></div>
-            <textarea
-              id="member-textarea"
-              rows="6"
-              aria-label="Comma-separated group member emails"
-              placeholder="member.one@example.com, member.two@example.com"
+
+            <div
+              id="member-individual-panel"
+              class="member-panel"
+              role="tabpanel"
+              aria-labelledby="member-mode-individual"
+            >
+              <div id="member-list" class="member-list"></div>
+              <button id="add-member" class="button button--quiet" type="button">+ Add person</button>
+            </div>
+
+            <div
+              id="member-paste-panel"
+              class="member-panel"
+              role="tabpanel"
+              aria-labelledby="member-mode-paste"
               hidden
-            ></textarea>
+            >
+              <label class="member-paste-label" for="member-textarea">
+                Paste email addresses separated by commas, semicolons, or new lines.
+              </label>
+              <textarea
+                id="member-textarea"
+                rows="6"
+                placeholder="member.one@example.com, member.two@example.com"
+              ></textarea>
+            </div>
+
             <small id="members-error" class="field-error"></small>
           </div>
-          <button id="add-member" class="button button--quiet" type="button">+ Add person</button>
         </div>
 
         <div id="form-status" class="form-status" role="alert" hidden></div>

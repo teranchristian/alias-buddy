@@ -91,3 +91,20 @@ test('parses pasted email lists separated by commas, semicolons, or new lines', 
   ]);
   assert.equal(aliases.formatEmailList(parsed), parsed.join(', '));
 });
+
+test('round-trips every group member between individual fields and pasted text', () => {
+  const individualMembers = [
+    'FIRST@example.com',
+    'second@example.com',
+    'third@example.com'
+  ];
+
+  const pastedText = aliases.formatEmailList(individualMembers);
+  const restoredMembers = aliases.parseEmailList(pastedText);
+
+  assert.deepEqual(restoredMembers, [
+    'first@example.com',
+    'second@example.com',
+    'third@example.com'
+  ]);
+});
