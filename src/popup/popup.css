@@ -1,0 +1,146 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #1d2433;
+  background: #f7f8fc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  margin: 0;
+  background:
+    radial-gradient(circle at 100% 0, rgb(92 90 255 / 12%), transparent 42%),
+    #f7f8fc;
+}
+
+button {
+  font: inherit;
+}
+
+.popup-shell {
+  padding: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.brand img {
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgb(58 55 160 / 20%);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+}
+
+.brand p {
+  margin: 1px 0 0;
+  color: #697083;
+  font-size: 12px;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  align-items: center;
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #e6e8f0;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 88%);
+  box-shadow: 0 8px 24px rgb(35 39 75 / 6%);
+}
+
+.summary > div:not(.summary-divider) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.summary strong {
+  font-size: 24px;
+  line-height: 28px;
+}
+
+.summary span {
+  color: #697083;
+  font-size: 12px;
+}
+
+.summary-divider {
+  width: 1px;
+  height: 36px;
+  background: #e6e8f0;
+}
+
+.status {
+  margin: -8px 0 14px;
+  color: #a33333;
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.actions {
+  display: grid;
+  gap: 9px;
+}
+
+.create-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.button {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.button:focus-visible {
+  outline: 3px solid rgb(86 83 229 / 28%);
+  outline-offset: 2px;
+}
+
+.button--primary {
+  border: 1px solid #504de0;
+  background: #5956e9;
+  color: #fff;
+}
+
+.button--primary:hover {
+  background: #4e4bd5;
+}
+
+.button--group {
+  border: 1px solid #0f8c83;
+  background: #e7f7f5;
+  color: #0b716a;
+}
+
+.button--group:hover {
+  background: #d5f0ed;
+}
+
+.button--secondary {
+  border: 1px solid #dfe2eb;
+  background: #fff;
+  color: #34394a;
+}
+
+.button--secondary:hover {
+  background: #f1f2f7;
+}

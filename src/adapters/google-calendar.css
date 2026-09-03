@@ -1,0 +1,91 @@
+.alias-buddy-calendar-popup {
+  position: fixed;
+  z-index: 999999;
+  box-sizing: border-box;
+  max-height: min(360px, calc(100vh - 24px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 0;
+  border-radius: 7px;
+  background: #303134;
+  color: #e8eaed;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 45%);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: normal;
+}
+
+.alias-buddy-calendar-result {
+  display: flex;
+  box-sizing: border-box;
+  min-height: 58px;
+  align-items: center;
+  padding: 8px 14px;
+  border: 0;
+  background: #303134;
+  color: #e8eaed;
+  cursor: pointer;
+}
+
+.alias-buddy-calendar-result[data-selected="true"] {
+  background: #4a4d51;
+}
+
+.alias-buddy-calendar-avatar {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  border-radius: 50%;
+  background: #1a73e8;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.alias-buddy-calendar-avatar--group {
+  font-size: 16px;
+}
+
+.alias-buddy-calendar-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.alias-buddy-calendar-nickname {
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 21px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.alias-buddy-calendar-details {
+  overflow: hidden;
+  opacity: 0.72;
+  font-size: 13px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.alias-buddy-calendar-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000000;
+  box-sizing: border-box;
+  max-width: min(430px, calc(100vw - 48px));
+  padding: 10px 14px;
+  border-radius: 7px;
+  background: #303134;
+  color: #e8eaed;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 40%);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}

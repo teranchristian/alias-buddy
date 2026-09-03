@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AliasBuddy</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup-shell">
+      <header class="brand">
+        <img src="../../icons/icon-48.png" width="36" height="36" alt="">
+        <div>
+          <h1>AliasBuddy</h1>
+          <p>Find people your way</p>
+        </div>
+      </header>
+
+      <section class="summary" aria-label="Saved entries">
+        <div>
+          <strong id="alias-count">0</strong>
+          <span id="alias-label">aliases</span>
+        </div>
+        <div class="summary-divider" aria-hidden="true"></div>
+        <div>
+          <strong id="group-count">0</strong>
+          <span id="group-label">groups</span>
+        </div>
+      </section>
+
+      <div id="status" class="status" role="status" hidden></div>
+
+      <div class="actions">
+        <div class="create-actions">
+          <button id="add-alias" class="button button--primary" type="button">+ Add alias</button>
+          <button id="add-group" class="button button--group" type="button">+ Add group</button>
+        </div>
+        <button id="manage" class="button button--secondary" type="button">Manage AliasBuddy</button>
+      </div>
+    </main>
+
+    <script src="../core/aliases.js"></script>
+    <script src="../core/storage.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

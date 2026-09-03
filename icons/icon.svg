@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="AliasBuddy icon">
+  <defs>
+    <linearGradient id="background" x1="18" y1="12" x2="112" y2="118" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7572ff"/>
+      <stop offset="1" stop-color="#4541c8"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#background)"/>
+  <path d="M27 35c0-7.18 5.82-13 13-13h48c7.18 0 13 5.82 13 13v36c0 7.18-5.82 13-13 13H62L43.5 101c-3.22 2.93-8.5.64-8.5-3.72V83.01A13 13 0 0 1 27 71V35Z" fill="#fff"/>
+  <circle cx="48" cy="53" r="8" fill="#5a57e5"/>
+  <circle cx="80" cy="53" r="8" fill="#5a57e5"/>
+  <path d="M47 69c8.8 7.2 25.2 7.2 34 0" fill="none" stroke="#5a57e5" stroke-width="7" stroke-linecap="round"/>
+</svg>

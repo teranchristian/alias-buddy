@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "AliasBuddy",
+  "version": "1.0.0",
+  "description": "Use your own aliases to find real people in supported web applications.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://calendar.google.com/*"
+  ],
+  "action": {
+    "default_title": "AliasBuddy",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://calendar.google.com/*"
+      ],
+      "css": [
+        "src/adapters/google-calendar.css"
+      ],
+      "js": [
+        "src/core/aliases.js",
+        "src/core/storage.js",
+        "src/core/resolver.js",
+        "src/adapters/adapter.js",
+        "src/adapters/google-calendar.js",
+        "src/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
