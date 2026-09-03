@@ -1,9 +1,11 @@
+import { createHash, createPublicKey } from 'node:crypto';
 import { access, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const packageDocument = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
 const targets = ['chrome-mv3', 'edge-mv3', 'firefox-mv3'];
+const expectedChromiumId = 'gpjnielbcjljbgipeglbkdigfdbbmokn';
 
 function check(condition, message) {
   if (!condition) {
@@ -39,6 +41,7 @@ for (const target of targets) {
 
   if (target === 'firefox-mv3') {
     const gecko = manifest.browser_specific_settings?.gecko;
+    check(!manifest.key, `${target}: Chromium public key leaked into the Firefox build.`);
     check(Boolean(gecko?.id), `${target}: a stable Firefox extension ID is required.`);
     check(
       gecko?.data_collection_permissions?.required?.length === 1 &&
@@ -46,6 +49,20 @@ for (const target of targets) {
       `${target}: Firefox must declare that AliasBuddy collects no data.`
     );
   } else {
+    check(Boolean(manifest.key), `${target}: a stable Chromium public key is required.`);
+    const publicKey = Buffer.from(manifest.key, 'base64');
+    check(
+      createPublicKey({ key: publicKey, format: 'der', type: 'spki' }).asymmetricKeyType === 'rsa',
+      `${target}: Chromium public key must be a valid RSA key.`
+    );
+    const idHash = createHash('sha256').update(publicKey).digest('hex').slice(0, 32);
+    const extensionId = [...idHash]
+      .map(character => String.fromCharCode(97 + Number.parseInt(character, 16)))
+      .join('');
+    check(
+      extensionId === expectedChromiumId,
+      `${target}: Chromium extension ID changed unexpectedly.`
+    );
     check(!manifest.browser_specific_settings, `${target}: Firefox-only settings leaked into this build.`);
   }
 

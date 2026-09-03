@@ -7,6 +7,16 @@ const icons = {
   128: 'icon-128.png'
 };
 
+// Keeps the extension ID stable across unpacked Chromium builds.
+const chromiumPublicKey =
+  'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsN3Jw5q/sWy6hfq/5ScX' +
+  'vZNxdPsrVR4mGx8/sZ5D/Au24GzCKGkzc3zpu7/ln2CqfXDLTRgMOIbdQhkpdsMJ' +
+  'gkNhb7ixBa/vHBUDpw6mJZVW5Ep9YXkZvhAAOC+lr5Djj7Qotdz5eegkqR17p8/0' +
+  'e2OM4u2Z6KtWGFSYAB+m8u4hh8MyS7it3UvgJje37K5CcECTxqsn8+kK9ltOTI16' +
+  'K1YnD5dcIv+1gt6lKcKq6RLX/YtHGaiEiv98/74tHD15Ta1KoSMU1yqhj2LkSHY1' +
+  'dbU1s++iqo2wMpOZ2ENgaETL08bonUoZvwmuSabKkiQgbAgWG9zsoumxt2oLP/i/' +
+  'UwIDAQAB';
+
 export default defineConfig({
   manifestVersion: 3,
   publicDir: 'icons',
@@ -32,6 +42,6 @@ export default defineConfig({
             }
           }
         }
-      : {})
+      : { key: chromiumPublicKey })
   })
 });

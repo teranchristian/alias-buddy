@@ -32,6 +32,13 @@ AliasBuddy starts empty. Add entries through its settings page; source-code edit
 
 Safari is not currently packaged. It requires Apple-specific conversion, signing, and testing.
 
+### Extension identities
+
+- **Chrome, Edge, and other unpacked Chromium browsers:** `gpjnielbcjljbgipeglbkdigfdbbmokn`
+- **Firefox:** `aliasbuddy@local.extension`
+
+The Chromium builds include the same public key, so their development ID remains stable when the build directory moves or is replaced. The public key is intentionally committed; never commit or distribute its corresponding private key. Browser stores can assign separate catalog IDs to their published packages.
+
 ## Build and install locally
 
 Install dependencies and create every browser build:
@@ -71,7 +78,7 @@ Temporary Firefox add-ons are removed when Firefox closes. Permanent Firefox ins
 
 ### Existing aliases and groups
 
-Extension storage is separate for every browser and extension ID. Before replacing an existing unpacked AliasBuddy installation, export a backup from **Manage AliasBuddy**. After loading a build under a new browser or extension ID, import that backup. Updating files in the same loaded extension directory normally preserves its data, but exporting first is the safe migration path.
+Extension storage is separate for every browser and extension ID. Before migrating an older unpacked AliasBuddy installation that did not use the permanent Chromium ID, export a backup from **Manage AliasBuddy** and keep the old extension installed. Load the permanent-ID build separately, import the backup, verify the aliases and groups, and only then remove the old installation. Future builds that retain the configured IDs update without changing their storage identity.
 
 ## Development
 
