@@ -1,7 +1,9 @@
 (function initialisePopup(root) {
   'use strict';
 
-  const storage = root.AliasBuddy.core.storage.createStorage(root.chrome);
+  const storageModel = root.AliasBuddy.core.storage;
+  const extensionApi = storageModel.getExtensionApi();
+  const storage = storageModel.createStorage(extensionApi);
   const aliasModel = root.AliasBuddy.core.aliases;
   const aliasCount = document.getElementById('alias-count');
   const aliasLabel = document.getElementById('alias-label');
@@ -25,17 +27,17 @@
   }
 
   document.getElementById('add-alias').addEventListener('click', () => {
-    const url = root.chrome.runtime.getURL('src/options/options.html#add-person');
-    root.chrome.tabs.create({ url });
+    const url = extensionApi.runtime.getURL('options.html#add-person');
+    extensionApi.tabs.create({ url });
   });
 
   document.getElementById('add-group').addEventListener('click', () => {
-    const url = root.chrome.runtime.getURL('src/options/options.html#add-group');
-    root.chrome.tabs.create({ url });
+    const url = extensionApi.runtime.getURL('options.html#add-group');
+    extensionApi.tabs.create({ url });
   });
 
   document.getElementById('manage').addEventListener('click', () => {
-    root.chrome.runtime.openOptionsPage();
+    extensionApi.runtime.openOptionsPage();
   });
 
   storage.getAll().then(renderCounts).catch(showError);

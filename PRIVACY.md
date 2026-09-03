@@ -14,7 +14,7 @@ AliasBuddy stores only information the user enters into the extension:
 - Email addresses mapped to person aliases
 - Email addresses included in group aliases
 
-This information is stored locally on the user's device with `chrome.storage.local`.
+This information is stored locally on the user's device with the browser's WebExtensions storage API.
 
 ## Data use and sharing
 
@@ -46,7 +46,7 @@ AliasBuddy does not request access to all websites. New applications will requir
 
 ## Retention and deletion
 
-Saved aliases remain in Chrome's local extension storage until the user edits or deletes them, clears extension data, or removes the extension. Users can delete individual aliases and groups from AliasBuddy's management page.
+Saved aliases remain in the browser's local extension storage until the user edits or deletes them, clears extension data, or removes the extension. Users can delete individual aliases and groups from AliasBuddy's management page.
 
 ## Remote code
 

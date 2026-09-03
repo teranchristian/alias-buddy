@@ -11,29 +11,32 @@
     }
   }
 
-  function promisifyStorageCall(chromeApi, method, argument) {
-    return new Promise((resolve, reject) => {
-      chromeApi.storage.local[method](argument, result => {
-        const error = chromeApi.runtime?.lastError;
-        if (error) {
-          reject(new Error(error.message));
-          return;
-        }
+  function getExtensionApi(explicitApi) {
+    if (explicitApi) {
+      return explicitApi;
+    }
 
-        resolve(result);
-      });
-    });
+    if (root.browser?.runtime?.id) {
+      return root.browser;
+    }
+
+    return root.chrome;
   }
 
-  function createStorage(chromeApi = root.chrome) {
-    requireAliasModel();
+  function callStorage(extensionApi, method, argument) {
+    return extensionApi.storage.local[method](argument);
+  }
 
-    if (!chromeApi?.storage?.local || !chromeApi.storage.onChanged) {
-      throw new Error('chrome.storage.local is unavailable.');
+  function createStorage(api) {
+    requireAliasModel();
+    const extensionApi = getExtensionApi(api);
+
+    if (!extensionApi?.storage?.local || !extensionApi.storage.onChanged) {
+      throw new Error('The browser storage API is unavailable.');
     }
 
     async function readDocument() {
-      const result = await promisifyStorageCall(chromeApi, 'get', STORAGE_KEY);
+      const result = await callStorage(extensionApi, 'get', STORAGE_KEY);
       const stored = result?.[STORAGE_KEY];
 
       if (!stored || stored.version !== STORAGE_VERSION || !Array.isArray(stored.entries)) {
@@ -52,7 +55,7 @@
         entries: aliasModel.sortEntries(entries.map(aliasModel.normalizeEntry))
       };
 
-      await promisifyStorageCall(chromeApi, 'set', { [STORAGE_KEY]: document });
+      await callStorage(extensionApi, 'set', { [STORAGE_KEY]: document });
       return document.entries;
     }
 
@@ -131,8 +134,8 @@
         listener(entries);
       };
 
-      chromeApi.storage.onChanged.addListener(handleChange);
-      return () => chromeApi.storage.onChanged.removeListener(handleChange);
+      extensionApi.storage.onChanged.addListener(handleChange);
+      return () => extensionApi.storage.onChanged.removeListener(handleChange);
     }
 
     return Object.freeze({
@@ -148,6 +151,7 @@
   const api = Object.freeze({
     STORAGE_KEY,
     STORAGE_VERSION,
+    getExtensionApi,
     createStorage
   });
 

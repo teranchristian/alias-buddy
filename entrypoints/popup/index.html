@@ -3,13 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="manifest.default_icon"
+      content="{'16':'/icon-16.png','32':'/icon-32.png','48':'/icon-48.png','128':'/icon-128.png'}"
+    >
     <title>AliasBuddy</title>
-    <link rel="stylesheet" href="popup.css">
   </head>
   <body>
     <main class="popup-shell">
       <header class="brand">
-        <img src="../../icons/icon-48.png" width="36" height="36" alt="">
+        <img src="/icon-48.png" width="36" height="36" alt="">
         <div>
           <h1>AliasBuddy</h1>
           <p>Find people your way</p>
@@ -39,8 +42,6 @@
       </div>
     </main>
 
-    <script src="../core/aliases.js"></script>
-    <script src="../core/storage.js"></script>
-    <script src="popup.js"></script>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>

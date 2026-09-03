@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="manifest.open_in_tab" content="true">
     <title>AliasBuddy settings</title>
-    <link rel="stylesheet" href="options.css">
   </head>
   <body>
     <header class="topbar">
       <a class="brand" href="#top" aria-label="AliasBuddy settings home">
-        <img src="../../icons/icon-48.png" width="38" height="38" alt="">
+        <img src="/icon-48.png" width="38" height="38" alt="">
         <span>AliasBuddy</span>
       </a>
       <span class="local-badge">Stored locally</span>
@@ -176,9 +176,6 @@
       </form>
     </dialog>
 
-    <script src="../core/aliases.js"></script>
-    <script src="../core/storage.js"></script>
-    <script src="../core/backup.js"></script>
-    <script src="options.js"></script>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>

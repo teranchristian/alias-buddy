@@ -1,6 +1,6 @@
 # AliasBuddy
 
-AliasBuddy is a local-first Chrome extension that lets you use memorable nicknames when searching for people in supported web applications.
+AliasBuddy is a local-first, cross-browser extension that lets you use memorable nicknames when searching for people in supported web applications.
 
 The first adapter supports Google Calendar. Type at least two characters of a saved nickname in Calendar's **Search for people to meet** field, choose the AliasBuddy result, and the extension asks Google's native PeopleKit autocomplete to select the real contact. AliasBuddy never creates a fake contact or selected-person chip.
 
@@ -12,28 +12,66 @@ The first adapter supports Google Calendar. Type at least two characters of a sa
 - Group cloning that opens an unsaved copy with a unique nickname
 - Versioned JSON backup export and validated restore
 - Case-insensitive nickname matching after two characters
-- Local storage with `chrome.storage.local`
+- Local storage with the standard WebExtensions storage API
 - Full add, edit, and delete management UI
 - Compact toolbar popup with alias and group totals
 - Google Calendar adapter based on the working userscript behavior
 - Sequential native selection for groups, including skips, retries, and a completion summary
 - No server, account, analytics, or external API
 - No broad host access: only `https://calendar.google.com/*`
+- One WXT codebase with dedicated Chrome, Microsoft Edge, and Firefox builds
 
 AliasBuddy starts empty. Add entries through its settings page; source-code editing is never required.
 
-## Install in Chrome
+## Supported browsers
 
-1. Clone or download this repository.
-2. Open `chrome://extensions` in Chrome.
-3. Enable **Developer mode**.
-4. Select **Load unpacked**.
-5. Choose the repository root—the directory containing `manifest.json`.
-6. Pin AliasBuddy from Chrome's Extensions menu if you want quick access.
-7. Click the AliasBuddy icon and select **Add alias**, **Add group**, or **Manage AliasBuddy**.
-8. Reload any Google Calendar tab that was already open.
+- **Google Chrome:** dedicated Manifest V3 build
+- **Microsoft Edge:** dedicated Manifest V3 build
+- **Mozilla Firefox 142+:** dedicated Manifest V3 desktop build
+- **Other Chromium browsers:** Brave, Opera, Vivaldi, Arc, and Chromium itself can use the Chrome build
 
-No build step is required. Chrome loads the checked-in JavaScript, HTML, and CSS directly.
+Safari is not currently packaged. It requires Apple-specific conversion, signing, and testing.
+
+## Build and install locally
+
+Install dependencies and create every browser build:
+
+```bash
+npm install
+npm run build
+```
+
+Then load the appropriate output:
+
+### Chrome and other Chromium browsers
+
+1. Open `chrome://extensions` in Chrome, or the equivalent extensions page in your Chromium browser.
+2. Enable **Developer mode**.
+3. Select **Load unpacked**.
+4. Choose `.output/chrome-mv3`.
+5. Pin AliasBuddy from Chrome's Extensions menu if you want quick access.
+6. Click the AliasBuddy icon and select **Add alias**, **Add group**, or **Manage AliasBuddy**.
+7. Reload any Google Calendar tab that was already open.
+
+### Microsoft Edge
+
+1. Open `edge://extensions`.
+2. Enable **Developer mode**.
+3. Select **Load unpacked** and choose `.output/edge-mv3`.
+4. Reload any Google Calendar tab that was already open.
+
+### Firefox
+
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Select **Load Temporary Add-on**.
+3. Choose `.output/firefox-mv3/manifest.json`.
+4. Reload any Google Calendar tab that was already open.
+
+Temporary Firefox add-ons are removed when Firefox closes. Permanent Firefox installation requires a build signed by Mozilla Add-ons.
+
+### Existing aliases and groups
+
+Extension storage is separate for every browser and extension ID. Before replacing an existing unpacked AliasBuddy installation, export a backup from **Manage AliasBuddy**. After loading a build under a new browser or extension ID, import that backup. Updating files in the same loaded extension directory normally preserves its data, but exporting first is the safe migration path.
 
 ## Development
 
@@ -41,44 +79,67 @@ Node.js 20 or newer is recommended for the local checks.
 
 ```bash
 npm test
+npm run build
 npm run validate
 npm run check
 ```
 
-To create a Chrome Web Store-ready zip:
+Run a specific browser during development:
+
+```bash
+npm run dev
+npm run dev:edge
+npm run dev:firefox
+```
+
+To create validated browser packages:
 
 ```bash
 npm run package
 ```
 
-The package is written to `dist/` and intentionally excludes tests, development scripts, and repository metadata.
+The command writes these packages to `dist/`:
+
+- `alias-buddy-v<version>-chrome.zip`
+- `alias-buddy-v<version>-edge.zip`
+- `alias-buddy-v<version>-firefox.zip`
+
+The Firefox ZIP must be signed by Mozilla before it can be installed permanently in standard Firefox releases.
 
 ## Architecture
 
 ```text
-manifest.json
+entrypoints/
+  google-calendar.content.js  WXT content-script entrypoint
+  popup/                      Toolbar popup entrypoint
+    index.html
+    main.js
+  options/                    Management-page entrypoint
+    index.html
+    main.js
 src/
   core/
     aliases.js          Data normalization and validation
-    storage.js          chrome.storage.local repository
+    storage.js          Cross-browser extension storage repository
     resolver.js         Nickname-only matching and duplicate filtering
   adapters/
     adapter.js          Adapter contract and registry
     google-calendar.js  PeopleKit discovery and native selection
     google-calendar.css Injected Calendar result and toast styles
   popup/
-    popup.html
     popup.js
     popup.css
   options/
-    options.html
     options.js
     options.css
   content.js            Generic adapter bootstrap and storage subscription
 icons/
 tests/
 scripts/
+wxt.config.mjs          Shared manifest and browser-specific settings
 ```
+
+WXT generates each browser's `manifest.json` under `.output/<browser>-mv3/`. The application logic and saved-data schema remain shared.
 
 The core has no Google Calendar selectors or behavior. The popup and settings page know only about the shared data model and storage repository. Application-specific DOM work lives inside adapters.
 
@@ -140,7 +201,7 @@ See [Google Calendar reference behavior](docs/google-calendar-reference.md) for 
    - `selectPerson(email)`
    - `getSelectedEmails()`
 3. Register a factory with `AliasBuddy.adapters.contract.register(...)`.
-4. Add only that application's precise host pattern and adapter script to `manifest.json`.
+4. Add only that application's precise host pattern to `wxt.config.mjs` and register its WXT content-script entrypoint.
 5. Use the shared resolver and storage modules. Do not add application selectors to the core.
 6. Make `selectPerson` finish through the application's real result and verify its real selected-person UI before reporting success.
 7. Add adapter-specific manual tests and cleanup for listeners, observers, and injected UI.
@@ -208,7 +269,7 @@ Import is atomic: AliasBuddy validates every entry before writing anything. Canc
 
 ## Privacy
 
-AliasBuddy stores aliases and group membership only in `chrome.storage.local`. It does not transmit them anywhere. See [PRIVACY.md](PRIVACY.md) for a Chrome Web Store-ready disclosure.
+AliasBuddy stores aliases and group membership only in the browser's local extension storage. It does not transmit them anywhere. See [PRIVACY.md](PRIVACY.md) for the store-ready disclosure.
 
 ## Troubleshooting
 

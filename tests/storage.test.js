@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 require('../src/core/aliases.js');
 const { createStorage, STORAGE_KEY } = require('../src/core/storage.js');
 
-function createChromeMock() {
+function createChromiumMock() {
   const values = {};
   const listeners = new Set();
 
@@ -14,10 +14,10 @@ function createChromeMock() {
     runtime: { lastError: null },
     storage: {
       local: {
-        get(key, callback) {
-          callback({ [key]: values[key] });
+        async get(key) {
+          return { [key]: values[key] };
         },
-        set(update, callback) {
+        async set(update) {
           Object.entries(update).forEach(([key, newValue]) => {
             const oldValue = values[key];
             values[key] = newValue;
@@ -25,7 +25,6 @@ function createChromeMock() {
               [key]: { oldValue, newValue }
             }, 'local'));
           });
-          callback();
         }
       },
       onChanged: {
@@ -42,8 +41,8 @@ function createChromeMock() {
   return { chromeApi, values };
 }
 
-test('creates, updates, and removes entries in chrome.storage.local', async () => {
-  const { chromeApi, values } = createChromeMock();
+test('creates, updates, and removes entries with Chromium extension storage', async () => {
+  const { chromeApi, values } = createChromiumMock();
   const storage = createStorage(chromeApi);
 
   await storage.upsert({
@@ -69,8 +68,52 @@ test('creates, updates, and removes entries in chrome.storage.local', async () =
   assert.deepEqual(await storage.getAll(), []);
 });
 
+test('supports promise-based extension storage used by Firefox', async () => {
+  const values = {};
+  const listeners = new Set();
+  const browserApi = {
+    runtime: { id: 'test-extension' },
+    storage: {
+      local: {
+        async get(key) {
+          return { [key]: values[key] };
+        },
+        async set(update) {
+          Object.entries(update).forEach(([key, newValue]) => {
+            const oldValue = values[key];
+            values[key] = newValue;
+            listeners.forEach(listener => listener({
+              [key]: { oldValue, newValue }
+            }, 'local'));
+          });
+        }
+      },
+      onChanged: {
+        addListener(listener) {
+          listeners.add(listener);
+        },
+        removeListener(listener) {
+          listeners.delete(listener);
+        }
+      }
+    }
+  };
+  const storage = createStorage(browserApi);
+
+  await storage.upsert({
+    id: 'firefox-person',
+    type: 'person',
+    nickname: 'Promise storage',
+    email: 'person@example.com'
+  });
+
+  assert.equal((await storage.getAll())[0].nickname, 'Promise storage');
+  assert.equal(await storage.remove('firefox-person'), true);
+  assert.deepEqual(await storage.getAll(), []);
+});
+
 test('notifies subscribers and supports unsubscribing', async () => {
-  const { chromeApi } = createChromeMock();
+  const { chromeApi } = createChromiumMock();
   const storage = createStorage(chromeApi);
   const snapshots = [];
   const unsubscribe = storage.subscribe(nextEntries => snapshots.push(nextEntries));
@@ -89,7 +132,7 @@ test('notifies subscribers and supports unsubscribing', async () => {
 });
 
 test('validates and atomically replaces all entries during restore', async () => {
-  const { chromeApi } = createChromeMock();
+  const { chromeApi } = createChromiumMock();
   const storage = createStorage(chromeApi);
   const replacement = [
     {

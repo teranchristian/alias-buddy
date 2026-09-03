@@ -9,7 +9,7 @@ const root = resolve(__dirname, '..');
 
 test('group member modes use two exclusive tab panels', async () => {
   const [html, css, javascript] = await Promise.all([
-    readFile(resolve(root, 'src/options/options.html'), 'utf8'),
+    readFile(resolve(root, 'entrypoints/options/index.html'), 'utf8'),
     readFile(resolve(root, 'src/options/options.css'), 'utf8'),
     readFile(resolve(root, 'src/options/options.js'), 'utf8')
   ]);

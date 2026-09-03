@@ -2,7 +2,7 @@
   'use strict';
 
   const aliasModel = root.AliasBuddy.core.aliases;
-  const storage = root.AliasBuddy.core.storage.createStorage(root.chrome);
+  const storage = root.AliasBuddy.core.storage.createStorage();
   const backup = root.AliasBuddy.core.backup;
   const elements = {
     peopleList: document.getElementById('people-list'),
