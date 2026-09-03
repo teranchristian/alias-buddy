@@ -92,8 +92,25 @@
 
         <div id="group-fields" hidden>
           <div class="field">
-            <span>Members</span>
+            <div class="member-heading">
+              <span>Members</span>
+              <div class="member-mode" role="group" aria-label="Member entry mode">
+                <button id="member-mode-individual" class="member-mode-button" type="button" aria-pressed="true">
+                  Individual fields
+                </button>
+                <button id="member-mode-paste" class="member-mode-button" type="button" aria-pressed="false">
+                  Paste list
+                </button>
+              </div>
+            </div>
             <div id="member-list" class="member-list"></div>
+            <textarea
+              id="member-textarea"
+              rows="6"
+              aria-label="Comma-separated group member emails"
+              placeholder="member.one@example.com, member.two@example.com"
+              hidden
+            ></textarea>
             <small id="members-error" class="field-error"></small>
           </div>
           <button id="add-member" class="button button--quiet" type="button">+ Add person</button>

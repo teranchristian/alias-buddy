@@ -34,6 +34,17 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized);
   }
 
+  function parseEmailList(value) {
+    return String(value || '')
+      .split(/[,;\n\r]+/)
+      .map(normalizeEmail)
+      .filter(Boolean);
+  }
+
+  function formatEmailList(emails) {
+    return (emails || []).map(normalizeEmail).filter(Boolean).join(', ');
+  }
+
   function createId() {
     if (root.crypto?.randomUUID) {
       return root.crypto.randomUUID();
@@ -115,6 +126,8 @@
     cleanNickname,
     normalizeEmail,
     looksLikeEmail,
+    parseEmailList,
+    formatEmailList,
     createId,
     normalizeEntry,
     validateEntry,

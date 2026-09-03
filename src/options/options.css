@@ -23,7 +23,8 @@ body {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -374,9 +375,9 @@ a:focus-visible {
   font-weight: 750;
 }
 
-.field input {
+.field input,
+.field textarea {
   width: 100%;
-  min-height: 44px;
   padding: 10px 12px;
   border: 1px solid #ccd1df;
   border-radius: 9px;
@@ -384,7 +385,18 @@ a:focus-visible {
   color: #1d2433;
 }
 
-.field input[aria-invalid="true"] {
+.field input {
+  min-height: 44px;
+}
+
+.field textarea {
+  min-height: 132px;
+  resize: vertical;
+  line-height: 22px;
+}
+
+.field input[aria-invalid="true"],
+.field textarea[aria-invalid="true"] {
   border-color: #be5656;
 }
 
@@ -399,6 +411,44 @@ a:focus-visible {
 .member-list {
   display: grid;
   gap: 8px;
+}
+
+.member-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 9px;
+}
+
+.member-heading > span {
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.member-mode {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid #dfe2eb;
+  border-radius: 9px;
+  background: #f5f6fa;
+}
+
+.member-mode-button {
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #687084;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.member-mode-button[aria-pressed="true"] {
+  background: #fff;
+  color: #504dd8;
+  box-shadow: 0 1px 4px rgb(35 39 75 / 12%);
 }
 
 .member-row {
@@ -476,6 +526,16 @@ a:focus-visible {
 
   .entry-card {
     grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .member-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .member-mode {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .entry-actions {

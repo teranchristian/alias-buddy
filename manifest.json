@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AliasBuddy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Use your own aliases to find real people in supported web applications.",
   "permissions": [
     "storage"

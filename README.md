@@ -8,6 +8,8 @@ The first adapter supports Google Calendar. Type at least two characters of a sa
 
 - Person aliases: one nickname mapped to one email address
 - Group aliases: one nickname mapped to several email addresses
+- Individual or paste-list group editing, with comma, semicolon, and new-line support
+- Group cloning that opens an unsaved copy with a unique nickname
 - Case-insensitive nickname matching after two characters
 - Local storage with `chrome.storage.local`
 - Full add, edit, and delete management UI
@@ -168,7 +170,11 @@ The popup, settings page, data model, storage, and generic `content.js` bootstra
 ## Group-testing checklist
 
 - [ ] Create a group with two or more valid, unique email addresses.
+- [ ] Switch to **Paste list**, paste comma-separated addresses, save, and confirm every member is retained.
+- [ ] Switch between **Individual fields** and **Paste list** and confirm no member is lost.
 - [ ] Confirm empty nicknames, invalid emails, and duplicate group emails are rejected.
+- [ ] Clone a group and confirm the form opens with copied members, a new ID, and a unique copy nickname.
+- [ ] Save the clone and confirm the original group remains unchanged.
 - [ ] Type two characters of the group nickname and confirm the group result appears.
 - [ ] Select the group and verify each member is searched and selected sequentially, never simultaneously.
 - [ ] Confirm every successful member appears as Google's native selected-person chip before the next search begins.

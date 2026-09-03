@@ -25,12 +25,17 @@
     emailError: document.getElementById('email-error'),
     groupFields: document.getElementById('group-fields'),
     memberList: document.getElementById('member-list'),
+    memberTextarea: document.getElementById('member-textarea'),
+    memberModeIndividual: document.getElementById('member-mode-individual'),
+    memberModePaste: document.getElementById('member-mode-paste'),
+    addMember: document.getElementById('add-member'),
     membersError: document.getElementById('members-error'),
     formStatus: document.getElementById('form-status')
   };
 
   let entries = [];
   let statusTimer = null;
+  let memberInputMode = 'individual';
 
   function setPageStatus(message, kind = 'error') {
     if (statusTimer) {
@@ -87,6 +92,12 @@
 
     const actions = document.createElement('div');
     actions.className = 'entry-actions';
+    if (entry.type === aliasModel.ENTRY_TYPES.GROUP) {
+      actions.appendChild(
+        createButton('Clone', 'small-button', () => cloneGroup(entry))
+      );
+    }
+
     actions.append(
       createButton('Edit', 'small-button', () => openEditor(entry.type, entry)),
       createButton('Delete', 'small-button small-button--danger', () => deleteEntry(entry))
@@ -117,6 +128,8 @@
     elements.formStatus.hidden = true;
     elements.nickname.removeAttribute('aria-invalid');
     elements.personEmail.removeAttribute('aria-invalid');
+    elements.memberTextarea.removeAttribute('aria-invalid');
+    elements.memberTextarea.setCustomValidity('');
     elements.memberList.querySelectorAll('input').forEach(input => {
       input.removeAttribute('aria-invalid');
       input.setCustomValidity('');
@@ -156,7 +169,61 @@
     });
   }
 
-  function openEditor(type, entry = null) {
+  function getIndividualMemberValues() {
+    return [...elements.memberList.querySelectorAll('input')].map(input => input.value);
+  }
+
+  function replaceIndividualMembers(emails) {
+    elements.memberList.replaceChildren();
+    const values = emails.length ? emails : [''];
+    values.forEach(addMemberRow);
+  }
+
+  function setMemberInputMode(mode, { sync = true } = {}) {
+    if (mode !== 'individual' && mode !== 'paste') {
+      return;
+    }
+
+    if (sync && mode === 'paste' && memberInputMode === 'individual') {
+      elements.memberTextarea.value = aliasModel.formatEmailList(getIndividualMemberValues());
+    } else if (sync && mode === 'individual' && memberInputMode === 'paste') {
+      replaceIndividualMembers(aliasModel.parseEmailList(elements.memberTextarea.value));
+    }
+
+    memberInputMode = mode;
+    const isIndividual = mode === 'individual';
+    elements.memberList.hidden = !isIndividual;
+    elements.memberTextarea.hidden = isIndividual;
+    elements.addMember.hidden = !isIndividual;
+    elements.memberModeIndividual.setAttribute('aria-pressed', String(isIndividual));
+    elements.memberModePaste.setAttribute('aria-pressed', String(!isIndividual));
+    clearFormErrors();
+  }
+
+  function uniqueCloneNickname(nickname) {
+    const usedNicknames = new Set(entries.map(entry => aliasModel.normalizeNickname(entry.nickname)));
+    const base = `${nickname} copy`;
+    let candidate = base;
+    let suffix = 2;
+
+    while (usedNicknames.has(aliasModel.normalizeNickname(candidate))) {
+      candidate = `${base} ${suffix}`;
+      suffix += 1;
+    }
+
+    return candidate;
+  }
+
+  function cloneGroup(entry) {
+    openEditor(aliasModel.ENTRY_TYPES.GROUP, {
+      id: aliasModel.createId(),
+      type: aliasModel.ENTRY_TYPES.GROUP,
+      nickname: uniqueCloneNickname(entry.nickname),
+      emails: [...entry.emails]
+    }, { clone: true });
+  }
+
+  function openEditor(type, entry = null, { clone = false } = {}) {
     const isGroup = type === aliasModel.ENTRY_TYPES.GROUP;
     elements.form.reset();
     elements.memberList.replaceChildren();
@@ -168,7 +235,9 @@
     elements.nicknameLabel.textContent = isGroup ? 'Group nickname' : 'Nickname';
     elements.dialogKicker.textContent = isGroup ? 'Group alias' : 'Person alias';
     elements.dialogTitle.textContent = entry
-      ? `Edit ${isGroup ? 'group' : 'alias'}`
+      ? clone
+        ? 'Clone group'
+        : `Edit ${isGroup ? 'group' : 'alias'}`
       : `Add ${isGroup ? 'group' : 'alias'}`;
 
     elements.personFields.hidden = isGroup;
@@ -177,7 +246,9 @@
 
     if (isGroup) {
       const emails = entry?.emails?.length ? entry.emails : [''];
-      emails.forEach(addMemberRow);
+      replaceIndividualMembers(emails);
+      elements.memberTextarea.value = aliasModel.formatEmailList(emails);
+      setMemberInputMode('individual', { sync: false });
     } else {
       elements.personEmail.value = entry?.email || '';
     }
@@ -213,8 +284,9 @@
     };
 
     if (type === aliasModel.ENTRY_TYPES.GROUP) {
-      candidate.emails = [...elements.memberList.querySelectorAll('input')]
-        .map(input => input.value);
+      candidate.emails = memberInputMode === 'paste'
+        ? aliasModel.parseEmailList(elements.memberTextarea.value)
+        : getIndividualMemberValues();
     } else {
       candidate.email = elements.personEmail.value;
     }
@@ -226,6 +298,15 @@
     const normalizedEmails = candidate.emails.map(aliasModel.normalizeEmail);
     const counts = new Map();
     normalizedEmails.forEach(email => counts.set(email, (counts.get(email) || 0) + 1));
+
+    if (memberInputMode === 'paste') {
+      const invalid = normalizedEmails.length === 0
+        || normalizedEmails.some(email => !aliasModel.looksLikeEmail(email))
+        || [...counts.values()].some(count => count > 1);
+      elements.memberTextarea.setAttribute('aria-invalid', String(invalid));
+      elements.memberTextarea.setCustomValidity(invalid ? 'Enter unique, valid email addresses.' : '');
+      return;
+    }
 
     elements.memberList.querySelectorAll('input').forEach((input, index) => {
       const normalized = normalizedEmails[index];
@@ -296,7 +377,9 @@
   document.getElementById('empty-add-group').addEventListener('click', () => {
     openEditor(aliasModel.ENTRY_TYPES.GROUP);
   });
-  document.getElementById('add-member').addEventListener('click', () => addMemberRow());
+  elements.addMember.addEventListener('click', () => addMemberRow());
+  elements.memberModeIndividual.addEventListener('click', () => setMemberInputMode('individual'));
+  elements.memberModePaste.addEventListener('click', () => setMemberInputMode('paste'));
   document.getElementById('close-dialog').addEventListener('click', closeEditor);
   document.getElementById('cancel-dialog').addEventListener('click', closeEditor);
   elements.form.addEventListener('submit', saveEntry);

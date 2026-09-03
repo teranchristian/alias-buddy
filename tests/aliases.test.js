@@ -76,3 +76,18 @@ test('prevents duplicate group members case-insensitively', () => {
   assert.equal(result.valid, false);
   assert.equal(result.errors.emails, 'The same email cannot appear twice in a group.');
 });
+
+test('parses pasted email lists separated by commas, semicolons, or new lines', () => {
+  const parsed = aliases.parseEmailList([
+    'MEMBER.ONE@example.com, member.two@example.com',
+    'member.three@example.com; member.four@example.com'
+  ].join('\n'));
+
+  assert.deepEqual(parsed, [
+    'member.one@example.com',
+    'member.two@example.com',
+    'member.three@example.com',
+    'member.four@example.com'
+  ]);
+  assert.equal(aliases.formatEmailList(parsed), parsed.join(', '));
+});
