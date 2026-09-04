@@ -113,6 +113,12 @@ The command writes these packages to `dist/`:
 
 The Firefox ZIP must be signed by Mozilla before it can be installed permanently in standard Firefox releases.
 
+## Automated releases
+
+Every push to `main`, including a merged pull request, runs the release workflow. It reads the version from `package.json` and checks for the corresponding `v<version>` GitHub release. If that release does not exist, the workflow runs the tests, builds and validates all browser packages, creates the Git tag, and publishes a GitHub release containing separate Chrome, Edge, and Firefox ZIP files.
+
+Increment the version in `package.json` before merging a release. Commits that retain an already-published version pass without creating a duplicate tag or release.
+
 ## Architecture
 
 ```text
