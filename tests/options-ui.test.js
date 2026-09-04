@@ -21,3 +21,13 @@ test('group member modes use two exclusive tab panels', async () => {
   assert.match(javascript, /memberIndividualPanel\.hidden = !isIndividual/);
   assert.match(javascript, /memberPastePanel\.hidden = isIndividual/);
 });
+
+test('settings explain the boundary between browser sync and durable backups', async () => {
+  const html = await readFile(resolve(root, 'entrypoints/options/index.html'), 'utf8');
+
+  assert.match(html, /Sync &amp; backup/);
+  assert.match(html, /built-in extension sync storage/);
+  assert.match(html, /Chrome\/Chromium, Edge, and Firefox use separate sync ecosystems/);
+  assert.match(html, /not an uninstall-safe long-term backup/i);
+  assert.match(html, /Export a JSON backup/);
+});
